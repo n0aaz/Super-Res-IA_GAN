@@ -1,6 +1,6 @@
 import numpy as np
 from pillow import Image
-from glob import glob3
+import glob
 
 
 class DataLoader():
@@ -18,7 +18,7 @@ class DataLoader():
         self.en_entrainement=False
     
     def load_data(self):
-        chemins = './datasets/'+self.dossier+'/' # recup le chemin ici avec quelque chose , ptet avec glob
+        chemins = glob("./images/"+self.dossier+"/*") # recup le chemin ici avec quelque chose , ptet avec glob
         
         batch_chemins_images = np.random.choice(chemin,size=self.batch_size)
         
