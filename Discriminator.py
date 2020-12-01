@@ -16,7 +16,7 @@ class Discriminator():
         self.df = 64 #nombre de filtres
         self.hr_shape = hrshape
     
-    def dicriminateur_bloc(layer_entree, filtres,bn=True) :
+    def discriminateur_bloc(self, layer_entree, filtres,bn=True) :
         #Ecriture du bloc réseau décrit dans la doc
         d = Conv2D(filtres, kernel=3,strides=1,padding='same')(layer_entree)
         d = LeakyReLU(alpha = 0.2)(d)
