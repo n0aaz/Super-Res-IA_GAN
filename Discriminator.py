@@ -1,31 +1,20 @@
 # Liste des imports
-import scipy
 import tensorflow as tf
-from tensorflow.keras.datasets import mnist
-#from tensorflow.keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
-from tensorflow.keras.layers import Input, Dense, Reshape, Flatten, Dropout, Concatenate
-from tensorflow.keras.layers import BatchNormalization, Activation, ZeroPadding2D, Add
-from tensorflow.keras.layers import PReLU, LeakyReLU
-from tensorflow.keras.layers import UpSampling2D, Conv2D
-from tensorflow.keras.applications import VGG19
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.optimizers import Adam
-import datetime
-import matplotlib.pyplot as plt
-import sys
-from data_loader1 import DataLoader
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.models import Model
 import numpy as np
-import os
+
 
 import tensorflow.keras.backend as K
 
 class Discriminator():
     
-    def __init__(self) :
-        
-        #Construction et Compilation du discriminateur
-        self.discriminateur = build()
-        self.discriminateur.compile(loss='mse',optimizer=optimizer, metrics=['accuracy'])
+    def __init__(self,hrshape) :
+        self.df = 64 #nombre de filtres
+        self.hr_shape = hrshape
     
     def dicriminateur_bloc(layer_entree, filtres,bn=True) :
         #Ecriture du bloc réseau décrit dans la doc
@@ -37,10 +26,10 @@ class Discriminator():
         return d
         
        
-    def discriminateur_reseau(self) :
+    def build(self) :
        
         d0 = Input(shape=self.hr_shape)
-
+        
         d1 = discriminateur_bloc(d0, self.df, bn=False)
         d2 = discriminateur_bloc(d1, self.df, strides=2)
         d3 = discriminateur_bloc(d2, self.df*2)
@@ -52,12 +41,7 @@ class Discriminator():
        
         d9 = Dense(self.df*16)(d8)
         d10 = LeakyReLU(alpha=0.2)(d9)
-        
-        return d10
+
+        validity = Dense(1, activation='sigmoid')(d10)
     
-    def build(self) :
-        
-        resultat_reseau = discriminateur_reseau(self)
-        validity = Dense(1, activation='sigmoid')(resultat_reseau)
-    
-        return Model(resultat_reseau, validity)
+        return Model(d0, validity)
