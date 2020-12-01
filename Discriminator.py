@@ -20,13 +20,27 @@ import os
 import tensorflow.keras.backend as K
 
 class Discriminator():
-
+    
+    def __init__(self, lr_shape,hr_shape) :
+        
+        #Construction et Compilation du discriminateur
+        self.discriminator = self.build_discriminator()
+        self.discriminator.compile(loss='mse',optimizer=optimizer, metrics=['accuracy'])
+    
+        # High res. and low res. images
+        img_hr = Input(shape=self.hr_shape)
+        img_lr = Input(shape=self.lr_shape)
+        
+    #Discriminateur détermine validité de la génération d'image HR
+        validity = self.discriminator(fake_hr)
+        self.combined = Model([img_lr, img_hr], [validity, fake_features])
+        self.combined.compile(loss=['binary_crossentropy', 'mse'], loss_weights=[1e-3, 1],optimizer=optimizer)
+    
     def Dicriminateur_bloc(layer_entree, filtres,bn=True) :
-        "Ecriture du bloc réseau décrit dans la doc"
+        #Ecriture du bloc réseau décrit dans la doc
         d = Conv2D(filtres, kernel=3,strides=1,padding='same')(layer_entree)
-        "Voir paramètres de Conv2D"
         d = LeakyReLU(alpha = 0.2)(d)
-        "Utilisation de la fonction d'activation LeakyReLU + efficace que ReLU "
+        #Utilisation de la fonction d'activation LeakyReLU + efficace que ReLU "
         
         if bn :
             d = BatchNormalization(momentum=0.8)(d)
@@ -55,4 +69,4 @@ class Discriminator():
         
         validity = Dense(1, activation='sigmoid')(d10)
     
-            return Model(d0, validity)
+        return Model(d0, validity)
