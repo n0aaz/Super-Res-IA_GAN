@@ -36,7 +36,7 @@ class Discriminator():
         self.combined = Model([img_lr, img_hr], [validity, fake_features])
         self.combined.compile(loss=['binary_crossentropy', 'mse'], loss_weights=[1e-3, 1],optimizer=optimizer)
     
-    def Dicriminateur_bloc(layer_entree, filtres,bn=True) :
+    def dicriminateur_bloc(layer_entree, filtres,bn=True) :
         #Ecriture du bloc réseau décrit dans la doc
         d = Conv2D(filtres, kernel=3,strides=1,padding='same')(layer_entree)
         d = LeakyReLU(alpha = 0.2)(d)
@@ -47,17 +47,17 @@ class Discriminator():
         return d
         
        
-    def Discriminateur_réseau(self) :
+    def discriminateur_réseau(self) :
        
         d0 = Input(shape=self.hr_shape)
 
-        d1 = d_block(d0, self.df, bn=False)
-        d2 = d_block(d1, self.df, strides=2)
-        d3 = d_block(d2, self.df*2)
-        d4 = d_block(d3, self.df*2, strides=2)
-        d5 = d_block(d4, self.df*4)
-        d6 = d_block(d5, self.df*4, strides=2)
-        d7 = d_block(d6, self.df*8)
+        d1 = discriminateur_bloc(d0, self.df, bn=False)
+        d2 = discriminateur_bloc(d1, self.df, strides=2)
+        d3 = discriminateur_bloc(d2, self.df*2)
+        d4 = discriminateur_bloc(d3, self.df*2, strides=2)
+        d5 = discriminateur_bloc(d4, self.df*4)
+        d6 = discriminateur_bloc(d5, self.df*4, strides=2)
+        d7 = discriminateur_bloc(d6, self.df*8)
         d8 = d_block(d7, self.df*8, strides=2)
        
         d9 = Dense(self.df*16)(d8)
