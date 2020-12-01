@@ -42,6 +42,12 @@ class Generator():
         preresidual = Conv2D(64, kernel_size=9, strides=1, padding='same')(image_lowres)
         preresidual = Activation('relu')(preresidual)
         return preresidual
+
+    def postresidual_block(self,layer_input,preresidual_input):
+        postresidual = Conv2D(64, kernel_size=3, strides=1, padding='same')(layer_input)
+        postresidual = BatchNormalization(momentum=0.8)(postresidual)
+        postresidual = Add()([postresidual, preresidual_input])
+
         
     def deconv2d(self,layer_input):
         """Layers used during upsampling"""
@@ -61,5 +67,15 @@ class Generator():
             residual=residual_block(residual,self.nbfiltres)
         
         # Bloc postrésiduel
-        postresidual
+        postresidual=postresidual_block(residual,preresidual)
 
+        # Upsampling
+        upsample = deconv2d(postresidual)
+        upsample = deconv2d(upsample) # on augmente encore un coup la résolution
+
+        # Sortie finale
+        sortie_highres=Conv2D(self.channels, kernel_size=9, strides=1, padding='same', activation='tanh')(upsample)
+
+        # On doit retourner un modèle de "bloc" tensorflow représenté comme une boite noire
+        # avec une entrée et une sortie.
+        return Model(image_lowres,sortie_highres) 
