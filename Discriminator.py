@@ -47,7 +47,7 @@ class Discriminator():
         return d
         
        
-    def discriminateur_réseau(self) :
+    def discriminateur_reseau(self) :
        
         d0 = Input(shape=self.hr_shape)
 
@@ -58,15 +58,16 @@ class Discriminator():
         d5 = discriminateur_bloc(d4, self.df*4)
         d6 = discriminateur_bloc(d5, self.df*4, strides=2)
         d7 = discriminateur_bloc(d6, self.df*8)
-        d8 = d_block(d7, self.df*8, strides=2)
+        d8 = discriminateur_bloc(d7, self.df*8, strides=2)
        
         d9 = Dense(self.df*16)(d8)
         d10 = LeakyReLU(alpha=0.2)(d9)
         
         return d10
     
-    def Build_Discriminateur() :
+    def build_Discriminateur(self) :
         
-        validity = Dense(1, activation='sigmoid')(d10)
+        resultat_reseau = discriminateur_reseau(self)
+        validity = Dense(1, activation='sigmoid')(resultat_reseau)
     
-        return Model(d0, validity)
+        return Model(resultat_reseau, validity)
