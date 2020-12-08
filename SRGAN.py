@@ -134,5 +134,40 @@ class SRGAN():
             
             # pour qu'on voie sur le terminal l'avancée
             print("Generation n°:"+str(k)+"\nDuree: "+str(tempsgeneration)+"\nDuree Totale:"+str(temps))
-
         
+    def echantillon_images (self, generation) :#generation=epoch
+    
+        os.mkdir('images/%s' % self.dataset_name, exist_ok = True)
+        #bibliothèque os (interaction systeme d'exploitation) : création répertoire
+    
+        #Récupération des images
+        highres, lowres = self.data_loader.load_data(batch_size=2, is_testing=True)
+        highres_genere = self.generator.predict(imgs_lr)
+    
+        # Redimensionnement
+        lowres = 0.5 * imgs_lr + 0.5
+        highres_genere = 0.5 * fake_hr + 0.5
+        highres = 0.5 * imgs_hr + 0.5
+    
+        #Sauvergarde des images HR générées et des images HR
+        ligne, colonne = 2,2
+        titres = ['Haute résolution générée','Haute résolution originale']
+        figure, axes = plt.subplots(ligne,colonne)
+        compteur = 0
+        for i in range(ligne) :
+            for colonne, image in enumerate ([highres_genere,highres]):
+                axs[ligne, colonne].imshow(image[ligne])
+                axs[ligne, colonne].set_title(titles[colonne])
+                axs[ligne, colonne].axis('off')
+            compteur += 1
+        fig.savefig('images/%s/%d.png' % (self.dataset_name, generation))
+        plt.close()
+
+        #Sauvegarde des images BR pour la comparaison
+        for j in range (ligne) :
+            figure = plt.figure()
+            plt.imshow(lowres[i])
+            
+            fig.savefig('images/%s/%d_lowres%d.png' % (self.dataset_name, generation, i))
+                plt.close()
+
