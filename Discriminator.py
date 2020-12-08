@@ -16,9 +16,9 @@ class Discriminator():
         self.df = 64 #nombre de filtres
         self.hr_shape = hrshape
     
-    def discriminateur_bloc(self, layer_entree, filtres,bn=True) :
+    def discriminateur_bloc(self, layer_entree, filtres,bn=True,strides=1) :
         #Ecriture du bloc réseau décrit dans la doc
-        d = Conv2D(filtres, kernel=3,strides=1,padding='same')(layer_entree)
+        d = Conv2D(filtres, kernel_size=3,strides=strides,padding='same')(layer_entree)
         d = LeakyReLU(alpha = 0.2)(d)
         
         if bn :
@@ -30,14 +30,14 @@ class Discriminator():
        
         d0 = Input(shape=self.hr_shape)
         
-        d1 = discriminateur_bloc(d0, self.df, bn=False)
-        d2 = discriminateur_bloc(d1, self.df, strides=2)
-        d3 = discriminateur_bloc(d2, self.df*2)
-        d4 = discriminateur_bloc(d3, self.df*2, strides=2)
-        d5 = discriminateur_bloc(d4, self.df*4)
-        d6 = discriminateur_bloc(d5, self.df*4, strides=2)
-        d7 = discriminateur_bloc(d6, self.df*8)
-        d8 = discriminateur_bloc(d7, self.df*8, strides=2)
+        d1 = self.discriminateur_bloc(d0, self.df, bn=False)
+        d2 = self.discriminateur_bloc(d1, self.df, strides=2)
+        d3 = self.discriminateur_bloc(d2, self.df*2)
+        d4 = self.discriminateur_bloc(d3, self.df*2, strides=2)
+        d5 = self.discriminateur_bloc(d4, self.df*4)
+        d6 = self.discriminateur_bloc(d5, self.df*4, strides=2)
+        d7 = self.discriminateur_bloc(d6, self.df*8)
+        d8 = self.discriminateur_bloc(d7, self.df*8, strides=2)
        
         d9 = Dense(self.df*16)(d8)
         d10 = LeakyReLU(alpha=0.2)(d9)

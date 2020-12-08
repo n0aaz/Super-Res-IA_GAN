@@ -50,19 +50,19 @@ class Generator():
     def build(self):
         image_lowres= Input(shape=self.lr_shape)
         # Bloc préresiduel
-        preresidual = preresidual_block(image_lowres)
+        preresidual = self.preresidual_block(image_lowres)
 
         # Blocs résiduels
-        residual= residual_block(preresidual,self.nbfiltres)
+        residual= self.residual_block(preresidual,self.nbfiltres)
         for k in range(self.nb_residual-1):
-            residual=residual_block(residual,self.nbfiltres)
+            residual=self.residual_block(residual,self.nbfiltres)
         
         # Bloc postrésiduel
-        postresidual=postresidual_block(residual,preresidual)
+        postresidual=self.postresidual_block(residual,preresidual)
 
         # Upsampling
-        upsample = deconv2d(postresidual)
-        upsample = deconv2d(upsample) # on augmente encore un coup la résolution
+        upsample = self.deconv2d(postresidual)
+        upsample = self.deconv2d(upsample) # on augmente encore un coup la résolution
 
         # Sortie finale
         sortie_highres=Conv2D(self.channels, kernel_size=9, strides=1, padding='same', activation='tanh')(upsample)

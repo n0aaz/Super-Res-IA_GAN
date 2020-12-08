@@ -19,7 +19,7 @@ class DataLoader():
         self.en_entrainement=False
     
     def load_data(self):
-        chemins = glob("./images/"+self.dossier+"/*") # recup le chemin ici avec quelque chose , ptet avec glob
+        chemins = glob("/mnt/share/OZDEMIR-VIGIER/images/"+self.dossier+"/*") # recup le chemin ici avec quelque chose , ptet avec glob
         
         batch_chemins_images = np.random.choice(chemins,size=self.batch_size)
         

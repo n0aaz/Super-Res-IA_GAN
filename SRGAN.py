@@ -13,7 +13,7 @@ from tensorflow.keras.optimizers import Adam
 import datetime
 import matplotlib.pyplot as plt
 import sys
-from data_loader1 import DataLoader
+from DataLoader import DataLoader
 import numpy as np
 import os
 
@@ -37,7 +37,7 @@ class SRGAN():
 
         optimizer=Adam(0.0002, 0.5)
 
-        self.vgg = Vgg(hr_shape).build()
+        self.vgg = Vgg(self.hr_shape).build()
         self.vgg.trainable = False
         self.vgg.compile(loss='mse',
             optimizer=optimizer,
@@ -52,12 +52,12 @@ class SRGAN():
         patch = int(self.hr_height / 2**4)
         self.disc_patch = (patch, patch, 1)    
 
-        self.discriminateur= Discriminator(hr_shape).build()
+        self.discriminateur= Discriminator(self.hr_shape).build()
         self.discriminateur.compile(loss='mse',
             optimizer=optimizer,
             metrics=['accuracy'])
 
-        self.generateur= Generator(lr_shape).build()
+        self.generateur= Generator(self.lr_shape).build()
 
         # Images (entrées) haute résolution & basse résolution
         img_highres = Input(shape=self.hr_shape)
@@ -137,17 +137,19 @@ class SRGAN():
         
     def echantillon_images (self, generation) :#generation=epoch
     
-        os.mkdir('images/%s' % self.dataset_name, exist_ok = True)
+        os.mkdir('images/%s/training' % self.dataset_name, exist_ok = True)
         #bibliothèque os (interaction systeme d'exploitation) : création répertoire
     
         #Récupération des images
+        self.data_loader.entrainement=True
+        self.data_loader.batch_size=2
         highres, lowres = self.data_loader.load_data(batch_size=2, is_testing=True)
-        highres_genere = self.generator.predict(imgs_lr)
+        highres_genere = self.generateur.predict(lowres)
     
         # Redimensionnement
-        lowres = 0.5 * imgs_lr + 0.5
-        highres_genere = 0.5 * fake_hr + 0.5
-        highres = 0.5 * imgs_hr + 0.5
+        lowres = 0.5 * lowres + 0.5
+        highres_genere = 0.5 * highres + 0.5
+        highres = 0.5 * highres + 0.5
     
         #Sauvergarde des images HR générées et des images HR
         ligne, colonne = 2,2
@@ -160,7 +162,7 @@ class SRGAN():
                 axs[ligne, colonne].set_title(titles[colonne])
                 axs[ligne, colonne].axis('off')
             compteur += 1
-        fig.savefig('images/%s/%d.png' % (self.dataset_name, generation))
+        fig.savefig('images/%s/training/%d.png' % (self.dataset_name, generation))
         plt.close()
 
         #Sauvegarde des images BR pour la comparaison
@@ -168,6 +170,6 @@ class SRGAN():
             figure = plt.figure()
             plt.imshow(lowres[i])
             
-            fig.savefig('images/%s/%d_lowres%d.png' % (self.dataset_name, generation, i))
+            fig.savefig('images/%s/training/%d_lowres%d.png' % (self.dataset_name, generation, i))
                 plt.close()
 

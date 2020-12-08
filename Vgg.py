@@ -9,7 +9,7 @@ import tensorflow.keras.backend as K
 
 class Vgg():
     def __init__(self,hrshape):
-        hr_shape = hrshape
+        self.hr_shape = hrshape
 
     def build(self):
         vgg=VGG19(weights="imagenet")
