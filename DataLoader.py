@@ -35,6 +35,7 @@ class DataLoader():
             img_lowres= np.array(Image.fromarray(img).resize((x_reduit,y_reduit)))
 
             #Data augmenting : de temps en temps on va flip horizontalement les images aléatoirement
+            #resize pour redimensionner les images à la même taille
             #permet d'avoir de meilleurs résultats apparemment
 
             if not self.en_entrainement and np.random.random()<0.5:
