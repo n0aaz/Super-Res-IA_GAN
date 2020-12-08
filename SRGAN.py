@@ -32,6 +32,9 @@ class SRGAN():
         self.hr_width = 224 #self.lr_width*4     # High resolution width
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
 
+        self.train_sample_interval=50
+        self.train_batch_size=1
+
         optimizer=Adam(0.0002, 0.5)
 
         self.vgg = Vgg(hr_shape).build()
@@ -76,7 +79,60 @@ class SRGAN():
                               optimizer=optimizer)
 
 
+    def train_discriminator(self):
+        highres,lowres = self.data_loader.load_data(self.train_batch_size)
 
-    def build(self):
-        pass
+        # image haute résolution générée 
+        highres_genere= self.generator.predict(lowres)
+
+        # association des sorties à ce qu'on veut : 
+        # une image originale -> le discriminateur retourne 1
+        # une image générée -> le discriminateur retourne 0
+
+        is_original= np.ones((self.train_batch_size,)+ self.disc_patch)
+        is_generated= np.zeros((self.train_batch_size)+self.disc_patch)
+
+        #entrainement du discriminateur sur les images originales puis générées
+        # et calcul du "loss" c'est à dire la fonction de perte 
+        discriminateur_loss_original = self.discriminateur.train_on_batch(highres,is_original)
+        discriminateur_loss_genere = self.discriminateur.train_on_batch(highres_genere,is_generated)
+        # la perte totale est la moyenne des deux pertes
+        discriminateur_loss_total = 0.5*np.add(discriminateur_loss_original,discriminateur_loss_genere)
+        return discriminateur_loss_total
+    
+    def train_generator(self):
+        highres,lowres = self.data_loader.load_data(self.train_batch_size)
+
+        # le but du générateur est de tendre vers le modèle où le discriminateur
+        # ne renvoie que des 1 (tout est original)
+        is_original=np.ones((batch_size,)+self.disc_patch)
+
+        # vgg va caracteriser les images, ces caractéristiques sont un critere d'entrainement
+        caract_images_reelles = self.vgg.predict(highres)
+
+        generateur_loss = self.combinaison.train_on_batch([lowres,highres],[is_original,caract_images_reelles])
+        # entrainement de la combinaison des deux pour avoir la perte du générateur
+        # lowres (entree) ->generateur-> fausse image -> discriminateur -> validite qu'on compare a la validité idéale 
+        # lowres (entree) ->generateur -> fausse image -> VGG19 -> caracteristique de la fausse image qu'on compare 
+        # aux caracteristiques de la vraie image highres
+
+        return generateur_loss
+
+    def train(self,generations):
+        
+        #debut chrono pour mesurer le temps d'entrainement
+        debut=datetime.datetime.now()
+
+        for k in range(generations):
+
+            debutgeneration=datetime.datetime.now()
+            disc_loss = train_discriminator()
+            gen_loss = train_generator()
+
+            temps = datetime.datetime.now()-debut
+            tempsgeneration = datetime.datetime.now() -debutgeneration
+            
+            # pour qu'on voie sur le terminal l'avancée
+            print("Generation n°:"+str(k)+"\nDuree: "+str(tempsgeneration)+"\nDuree Totale:"+str(temps))
+
         

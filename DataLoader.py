@@ -11,6 +11,7 @@ class DataLoader():
         self.batch_size=1
         self.facteur_reduction=4
 
+
     def entrainement(self): # méthode à invoquer pour signaler que ce sont des données d'entrainement
         self.en_entrainement=True
     
