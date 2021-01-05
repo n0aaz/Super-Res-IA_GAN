@@ -62,11 +62,11 @@ class Generator():
         postresidual=self.postresidual_block(residual,preresidual)
 
         # Upsampling
-        upsample = self.deconv2d(postresidual)
-        upsample = self.deconv2d(upsample) # on augmente encore un coup la résolution
+        upsample0 = self.deconv2d(postresidual)
+        upsample1 = self.deconv2d(upsample0) # on augmente encore un coup la résolution
 
         # Sortie finale
-        sortie_highres=Conv2D(self.channels, kernel_size=9, strides=1, padding='same', activation='tanh')(upsample)
+        sortie_highres=Conv2D(self.channels, kernel_size=9, strides=1, padding='same', activation='tanh')(upsample1)
 
         # On doit retourner un modèle de "bloc" tensorflow représenté comme une boite noire
         # avec une entrée et une sortie.
