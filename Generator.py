@@ -21,31 +21,32 @@ class Generator():
         _,_,self.channels = self.lr_shape
     
     def residual_block(self,layer_input,filtres):
-        d = Conv2D(filtres, kernel_size=3, strides=1, padding='same')(layer_input)
-        d = Activation('relu')(d)
-        d = BatchNormalization(momentum=0.8)(d)
-        d = Conv2D(filtres, kernel_size=3, strides=1, padding='same')(d)
-        d = BatchNormalization(momentum=0.8)(d)
-        d = Add()([d, layer_input])
-        return d
+        d0 = Conv2D(filtres, kernel_size=3, strides=1, padding='same')(layer_input)
+        d1 = Activation('relu')(d0)
+        d2 = BatchNormalization(momentum=0.8)(d1)
+        d3 = Conv2D(filtres, kernel_size=3, strides=1, padding='same')(d2)
+        d4 = BatchNormalization(momentum=0.8)(d3)
+        d5 = Add()([d4, layer_input])
+        return d5
     
     def preresidual_block(self,layer_input):
-        preresidual = Conv2D(64, kernel_size=9, strides=1, padding='same')(layer_input)
-        preresidual = Activation('relu')(preresidual)
-        return preresidual
+        preresidual0 = Conv2D(64, kernel_size=9, strides=1, padding='same')(layer_input)
+        preresidual1 = Activation('relu')(preresidual0)
+        return preresidual1
 
     def postresidual_block(self,layer_input,preresidual_input):
-        postresidual = Conv2D(64, kernel_size=3, strides=1, padding='same')(layer_input)
-        postresidual = BatchNormalization(momentum=0.8)(postresidual)
-        postresidual = Add()([postresidual, preresidual_input])
+        postresidual0 = Conv2D(64, kernel_size=3, strides=1, padding='same')(layer_input)
+        postresidual1 = BatchNormalization(momentum=0.8)(postresidual0)
+        postresidual2 = Add()([postresidual1, preresidual_input])
+        return postresidual2
 
         
     def deconv2d(self,layer_input):
         """Layers used during upsampling"""
-        u = UpSampling2D(size=2)(layer_input)
-        u = Conv2D(256, kernel_size=3, strides=1, padding='same')(u)
-        u = Activation('relu')(u)
-        return u
+        u0 = UpSampling2D(size=2)(layer_input)
+        u1 = Conv2D(256, kernel_size=3, strides=1, padding='same')(u0)
+        u2 = Activation('relu')(u1)
+        return u2
 
     def build(self):
         image_lowres= Input(shape=self.lr_shape)

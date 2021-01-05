@@ -171,5 +171,5 @@ class SRGAN():
             plt.imshow(lowres[i])
             
             fig.savefig('images/%s/training/%d_lowres%d.png' % (self.dataset_name, generation, i))
-                plt.close()
+            plt.close()
 
