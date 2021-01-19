@@ -8,7 +8,7 @@ from tensorflow.keras.models import Model
 import tensorflow.keras.backend as K
 
 class Vgg():
-    def __init__(self,hrshape):
+    def __init__(self, hrshape):
         self.hr_shape = hrshape
 
     def build(self):

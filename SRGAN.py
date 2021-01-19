@@ -17,7 +17,9 @@ from DataLoader import DataLoader
 import numpy as np
 import os
 
-import Generator,Discriminator,Vgg
+from Generator import Generator
+from Discriminator import Discriminator
+from Vgg import Vgg
 
 import tensorflow.keras.backend as K
 
