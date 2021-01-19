@@ -85,7 +85,8 @@ class SRGAN():
     def train_discriminator(self):
         self.data_loader.batch_size=self.train_batch_size
         highres,lowres = self.data_loader.load_data()
-
+        
+        print(len(lowres),len(highres))
         # image haute résolution générée 
         highres_genere= self.generateur.predict(lowres)
 
@@ -93,8 +94,8 @@ class SRGAN():
         # une image originale -> le discriminateur retourne 1
         # une image générée -> le discriminateur retourne 0
 
-        is_original= np.ones((self.train_batch_size,)+ self.disc_patch)
-        is_generated= np.zeros((self.train_batch_size)+self.disc_patch)
+        is_original= np.ones((self.train_batch_size,)+self.disc_patch)
+        is_generated= np.zeros((self.train_batch_size,)+self.disc_patch)
 
         #entrainement du discriminateur sur les images originales puis générées
         # et calcul du "loss" c'est à dire la fonction de perte 
@@ -105,11 +106,12 @@ class SRGAN():
         return discriminateur_loss_total
     
     def train_generator(self):
-        highres,lowres = self.data_loader.load_data(self.train_batch_size)
+        self.data_loader.batch_size=self.train_batch_size
+        highres,lowres = self.data_loader.load_data()
 
         # le but du générateur est de tendre vers le modèle où le discriminateur
         # ne renvoie que des 1 (tout est original)
-        is_original=np.ones((batch_size,)+self.disc_patch)
+        is_original=np.ones((self.train_batch_size,)+self.disc_patch)
 
         # vgg va caracteriser les images, ces caractéristiques sont un critere d'entrainement
         caract_images_reelles = self.vgg.predict(highres)
