@@ -33,7 +33,7 @@ class DataLoader():
             img_highres= np.array(Image.fromarray(img).resize((x,y)),dtype=float)
             img_lowres= np.array(Image.fromarray(img).resize((x_reduit,y_reduit)))
             
-            print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
+            #print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
 
             #Data augmenting : de temps en temps on va flip horizontalement les images aléatoirement
             #resize pour redimensionner les images à la même taille

@@ -86,7 +86,7 @@ class SRGAN():
         self.data_loader.batch_size=self.train_batch_size
         highres,lowres = self.data_loader.load_data()
         
-        print(len(lowres),len(highres))
+        #print(len(lowres),len(highres))
         # image haute résolution générée 
         highres_genere= self.generateur.predict(lowres)
 
