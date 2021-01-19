@@ -1,6 +1,6 @@
 import numpy as np
 from PIL import Image
-import glob
+from glob import glob
 
 
 class DataLoader():
@@ -19,8 +19,7 @@ class DataLoader():
         self.en_entrainement=False
     
     def load_data(self):
-        chemins = glob("/mnt/share/OZDEMIR-VIGIER/images/"+self.dossier+"/*") # recup le chemin ici avec quelque chose , ptet avec glob
-        
+        chemins = glob("./datasets/"+self.dossier+"/*") # recup le chemin ici avec quelque chose , ptet avec glob
         batch_chemins_images = np.random.choice(chemins,size=self.batch_size)
         
         images_lowres=[]

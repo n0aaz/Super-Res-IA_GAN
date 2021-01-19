@@ -39,7 +39,8 @@ class SRGAN():
 
         optimizer=Adam(0.0002, 0.5)
 
-        self.vgg = Vgg(self.hr_shape).build()
+        self.vgg = Vgg(self.hr_shape)
+        self.vgg = self.vgg.build()
         self.vgg.trainable = False
         self.vgg.compile(loss='mse',
             optimizer=optimizer,
@@ -66,7 +67,7 @@ class SRGAN():
         img_lowres = Input(shape=self.lr_shape)
 
         # Haute résolution générée par le générateur:
-        gen_highres = self.generator(img_lowres)
+        gen_highres = self.generateur(img_lowres)
 
         # Features de l'image du générateur
         gen_features= self.vgg(gen_highres)
@@ -82,10 +83,11 @@ class SRGAN():
 
 
     def train_discriminator(self):
-        highres,lowres = self.data_loader.load_data(self.train_batch_size)
+        self.data_loader.batch_size=self.train_batch_size
+        highres,lowres = self.data_loader.load_data()
 
         # image haute résolution générée 
-        highres_genere= self.generator.predict(lowres)
+        highres_genere= self.generateur.predict(lowres)
 
         # association des sorties à ce qu'on veut : 
         # une image originale -> le discriminateur retourne 1
@@ -128,8 +130,8 @@ class SRGAN():
         for k in range(generations):
 
             debutgeneration=datetime.datetime.now()
-            disc_loss = train_discriminator()
-            gen_loss = train_generator()
+            disc_loss = self.train_discriminator()
+            gen_loss = self.train_generator()
 
             temps = datetime.datetime.now()-debut
             tempsgeneration = datetime.datetime.now() -debutgeneration
@@ -145,7 +147,7 @@ class SRGAN():
         #Récupération des images
         self.data_loader.entrainement=True
         self.data_loader.batch_size=2
-        highres, lowres = self.data_loader.load_data(batch_size=2, is_testing=True)
+        highres, lowres = self.data_loader.load_data()
         highres_genere = self.generateur.predict(lowres)
     
         # Redimensionnement
