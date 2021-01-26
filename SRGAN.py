@@ -177,5 +177,17 @@ class SRGAN():
             plt.imshow(lowres[i])
             
             fig.savefig('images/%s/training/%d_lowres%d.png' % (self.dataset_name, generation, i))
+            
             plt.close()
-
+            
+    def sauvegarde_modele(self,dossier="Model/"):
+        # Fonction pour pouvoir sauvegarder le modèle une fois enregistré, pour ne pas avoir à recalculer
+        # instructions ici : https://www.tensorflow.org/guide/keras/save_and_serialize
+        
+        # -- Sauvegarde générateur --
+        self.generateur.save(dossier+"Generateur")
+        # -- Sauvegarde discriminateur --
+        self.discriminateur.save(dossier+"Discriminateur")
+        # -- Sauvegarde modèle combiné --
+        self.combinaison.save(dossier+"modeleCombine")
+        
