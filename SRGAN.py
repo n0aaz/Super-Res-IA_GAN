@@ -47,7 +47,7 @@ class SRGAN():
             metrics=['accuracy'])        
 
         # Configure data loader
-        self.dataset_name = 'img_align_celeba'
+        self.dataset_name = 'MS_Coco'
         self.data_loader = DataLoader(dossier=self.dataset_name,
                                       resolution=(self.hr_height, self.hr_width))
         
