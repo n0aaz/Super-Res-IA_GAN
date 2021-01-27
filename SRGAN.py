@@ -195,13 +195,17 @@ class SRGAN():
         # -- Sauvegarde modèle combiné --
         self.combinaison.save(dossier+"modeleCombine")
         
+        print("Modèles sauvegardés avec succès!")
+        
     def charger_modeles(self,dossier="Model/"):
         # Fonction pour pouvoir charger le modèle une fois enregistré, pour ne pas avoir à recalculer
         # instructions ici : https://www.tensorflow.org/guide/keras/save_and_serialize
         
+        print("Chargement du modèle depuis ",dossier," en cours ...")
         # -- Charger générateur --
         self.generateur= keras.models.load_model(dossier+"Generateur")
         # -- Charger discriminateur --
         self.discriminateur= keras.models.load_model(dossier+"Discriminateur")
         # -- Charger modèle combiné --
         self.combinaison= keras.models.load_model(dossier+"modeleCombine")
+        print("Modèle chargé !")
