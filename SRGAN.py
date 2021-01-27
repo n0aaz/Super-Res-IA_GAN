@@ -87,7 +87,11 @@ class SRGAN():
         highres,lowres = self.data_loader.load_data()
         
         #print(len(lowres),len(highres))
+        
         # image haute résolution générée 
+        
+        #print("train_generator line 90 , shape of lowres :",highres.shape)
+
         highres_genere= self.generateur.predict(lowres)
 
         # association des sorties à ce qu'on veut : 
