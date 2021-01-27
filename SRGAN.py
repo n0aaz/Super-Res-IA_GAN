@@ -164,20 +164,20 @@ class SRGAN():
         #Sauvergarde des images HR générées et des images HR
         ligne, colonne = 2,2
         titres = ['Haute résolution générée','Haute résolution originale']
-        figure, axes = plt.subplots(ligne,colonne)
+        fig, axs = plt.subplots(ligne,colonne)
         compteur = 0
         for i in range(ligne) :
             for colonne, image in enumerate ([highres_genere,highres]):
-                axs[ligne, colonne].imshow(image[ligne])
-                axs[ligne, colonne].set_title(titles[colonne])
-                axs[ligne, colonne].axis('off')
+                axs[i, colonne].imshow(image[i])
+                axs[i, colonne].set_title(titres[colonne])
+                axs[i, colonne].axis('off')
             compteur += 1
         fig.savefig('images/%s/training/%d.png' % (self.dataset_name, generation))
         plt.close()
 
         #Sauvegarde des images BR pour la comparaison
         for j in range (ligne) :
-            figure = plt.figure()
+            fig = plt.figure()
             plt.imshow(lowres[i])
             
             fig.savefig('images/%s/training/%d_lowres%d.png' % (self.dataset_name, generation, i))
