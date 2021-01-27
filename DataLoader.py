@@ -43,8 +43,13 @@ class DataLoader():
                 img_highres=np.fliplr(img_highres)
                 img_lowres=np.fliplr(img_lowres)
             
-            images_highres.append(img_highres)
-            images_lowres.append(img_lowres)
+            # Introduire une condition pour éliminer les images de mauvaise dimension
+            if len(img_highres.shape)>=3:
+                images_highres.append(img_highres)
+            
+            if len(img_lowres.shape)>=3:
+                #print(img_lowres.shape)
+                images_lowres.append(img_lowres)
         
         #normalisation des données : pour avoir des valeurs de pixel entre -1 et +1
         images_highres=np.array(images_highres)/255.0*2.0-1.0
