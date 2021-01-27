@@ -6,4 +6,4 @@ from time import sleep
 SR=srgan()
 
 SR.train(10000)
-SR.sauvegarde_modele()
+SR.sauvegarde_modeles()
