@@ -37,13 +37,13 @@ class SRGAN():
         self.train_sample_interval=50
         self.train_batch_size=1
 
-        optimizer=Adam(0.0002, 0.5)
+        self.optimizer=Adam(0.0002, 0.5)
 
         self.vgg = Vgg(self.hr_shape)
         self.vgg = self.vgg.build()
         self.vgg.trainable = False
         self.vgg.compile(loss='mse',
-            optimizer=optimizer,
+            optimizer=self.optimizer,
             metrics=['accuracy'])        
 
         # Configure data loader
@@ -57,7 +57,7 @@ class SRGAN():
 
         self.discriminateur= Discriminator(self.hr_shape).build()
         self.discriminateur.compile(loss='mse',
-            optimizer=optimizer,
+            optimizer=self.optimizer,
             metrics=['accuracy'])
 
         self.generateur= Generator(self.lr_shape).build()
@@ -79,7 +79,7 @@ class SRGAN():
         self.combinaison = Model([img_lowres,img_highres],[validite,gen_features])
         self.combinaison.compile(loss=['binary_crossentropy', 'mse'],
                               loss_weights=[1e-3, 1],
-                              optimizer=optimizer)
+                              optimizer=self.optimizer)
 
 
     def train_discriminator(self):
@@ -147,7 +147,7 @@ class SRGAN():
         
     def echantillon_images (self, generation) :#generation=epoch
     
-        os.mkdir('images/%s/training' % self.dataset_name, exist_ok = True)
+        os.makedirs('images/%s/training' % self.dataset_name, exist_ok = True)
         #bibliothèque os (interaction systeme d'exploitation) : création répertoire
     
         #Récupération des images
@@ -203,9 +203,20 @@ class SRGAN():
         
         print("Chargement du modèle depuis ",dossier," en cours ...")
         # -- Charger générateur --
-        self.generateur= keras.models.load_model(dossier+"Generateur")
+        self.generateur= tf.keras.models.load_model(dossier+"Generateur")
         # -- Charger discriminateur --
-        self.discriminateur= keras.models.load_model(dossier+"Discriminateur")
+        self.discriminateur= tf.keras.models.load_model(dossier+"Discriminateur")
         # -- Charger modèle combiné --
-        self.combinaison= keras.models.load_model(dossier+"modeleCombine")
-        print("Modèle chargé !")
+        self.combinaison= tf.keras.models.load_model(dossier+"modeleCombine")
+
+        # Les modèles que l'on avait sauvegardé précédemment n'étaient pas compilés
+        # On doit les compiler avant de pouvoir les utiliser.
+        print("Compilation du discriminateur...")
+        self.discriminateur.compile(loss='mse',
+            optimizer=self.optimizer,
+            metrics=['accuracy'])
+        print("Compilation du modèle combiné...")
+        self.combinaison.compile(loss=['binary_crossentropy', 'mse'],
+                              loss_weights=[1e-3, 1],
+                              optimizer=self.optimizer)
+        print("Modèle chargé !\n")
