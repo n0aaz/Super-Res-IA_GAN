@@ -62,12 +62,10 @@ class ImageSuperRes():
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
 
-        predictions = np.array([[
+        predictions = np.array([
             255*0.5 *( sr.generateur.predict(
-                np.array([miniImages[k,l]],dtype="float32")
-            )[0]+1 )
-            for k in range(len(miniImages)) ]
-            for l in range(len(miniImages[0]))
-            ],dtype=object)
+                np.array(miniImages[k],dtype="float32")
+            )+1 )
+            for k in range(len(miniImages)) ],dtype=object)
         
-        self.reconstitue_image(predictions)
+        return self.reconstitue_image(predictions)

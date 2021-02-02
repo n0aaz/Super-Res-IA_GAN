@@ -4,12 +4,12 @@ from glob import glob
 
 
 class DataLoader():
-    def __init__(self,dossier,resolution=(128,128)):
+    def __init__(self,dossier,resolution=(224,224)):
         self.dossier= dossier
         self.resolution= resolution
         self.en_entrainement= False
         self.batch_size=1
-        self.facteur_reduction=4
+        self.facteur_reduction=2
 
 
     def entrainement(self): # méthode à invoquer pour signaler que ce sont des données d'entrainement

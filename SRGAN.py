@@ -27,15 +27,15 @@ class SRGAN():
     def __init__(self):
         # Input shape
         self.channels = 3
-        self.lr_height = 224//4 #64                 # Low resolution height
-        self.lr_width = 224//4 #64                  # Low resolution width
+        self.lr_height = 224//2 #64                 # Low resolution height
+        self.lr_width = 224//2 #64                  # Low resolution width
         self.lr_shape = (self.lr_height, self.lr_width, self.channels)
         self.hr_height = 224 #self.lr_height*4   # High resolution height
         self.hr_width = 224 #self.lr_width*4     # High resolution width
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
 
         self.train_sample_interval=50
-        self.train_batch_size=1
+        self.train_batch_size=16
 
         self.optimizer=Adam(0.0002, 0.5)
 
@@ -158,13 +158,14 @@ class SRGAN():
     
         # Redimensionnement
         lowres = 0.5 * lowres + 0.5
-        highres_genere = 0.5 * highres + 0.5
+        highres_genere = 0.5 * highres_genere + 0.5
         highres = 0.5 * highres + 0.5
     
         #Sauvergarde des images HR générées et des images HR
         ligne, colonne = 2,2
         titres = ['Haute résolution générée','Haute résolution originale']
         fig, axs = plt.subplots(ligne,colonne)
+        fig.set_size_inches(12,8)
         compteur = 0
         for i in range(ligne) :
             for colonne, image in enumerate ([highres_genere,highres]):
