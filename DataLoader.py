@@ -9,7 +9,7 @@ class DataLoader():
         self.resolution= resolution
         self.en_entrainement= False
         self.batch_size=1
-        self.facteur_reduction=2
+        self.facteur_reduction=4
 
 
     def entrainement(self): # méthode à invoquer pour signaler que ce sont des données d'entrainement
@@ -28,6 +28,9 @@ class DataLoader():
         chemins = glob("./datasets/"+self.dossier+"/*.jpg") # recup le chemin ici avec quelque chose , ptet avec glob
         
         while(len(images_lowres)<self.batch_size or len(images_highres)<self.batch_size): # On va recommencer si des images sont droppées 
+            images_lowres=[]
+            images_highres=[]
+            
             batch_chemins_images = np.random.choice(chemins,size=self.batch_size)
 
             for chemin in batch_chemins_images:

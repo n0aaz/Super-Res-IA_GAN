@@ -27,15 +27,18 @@ class SRGAN():
     def __init__(self):
         # Input shape
         self.channels = 3
-        self.lr_height = 224//2 #64                 # Low resolution height
-        self.lr_width = 224//2 #64                  # Low resolution width
+        self.lr_height = 224//4 #64                 # Low resolution height
+        self.lr_width = 224//4 #64                  # Low resolution width
         self.lr_shape = (self.lr_height, self.lr_width, self.channels)
         self.hr_height = 224 #self.lr_height*4   # High resolution height
         self.hr_width = 224 #self.lr_width*4     # High resolution width
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
+        
+        print("lr_shape,hrshape=",self.lr_shape, self.hr_shape)
 
         self.train_sample_interval=50
         self.train_batch_size=16
+        
 
         self.optimizer=Adam(0.0002, 0.5)
 
@@ -50,7 +53,7 @@ class SRGAN():
         self.dataset_name = 'MS_Coco'
         self.data_loader = DataLoader(dossier=self.dataset_name,
                                       resolution=(self.hr_height, self.hr_width))
-        
+        self.data_loader.batch_size=self.train_batch_size
         # Calculate output shape of D (PatchGAN)
         patch = int(self.hr_height / 2**4)
         self.disc_patch = (patch, patch, 1)    
@@ -86,11 +89,12 @@ class SRGAN():
         self.data_loader.batch_size=self.train_batch_size
         highres,lowres = self.data_loader.load_data()
         
-        #print(len(lowres),len(highres))
+        print("batch size= ",self.train_batch_size,self.data_loader.batch_size)
+        print(len(lowres),len(highres))
         
         # image haute résolution générée 
         
-        #print("train_generator line 90 , shape of lowres :",highres.shape)
+        print("train_generator line 90 , shape of lowres :",highres.shape)
 
         highres_genere= self.generateur.predict(lowres)
 
