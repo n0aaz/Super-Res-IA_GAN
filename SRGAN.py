@@ -240,3 +240,14 @@ class SRGAN():
                               loss_weights=[1e-3, 1],
                               optimizer=self.optimizer)
         print("Modèle chargé !\n")
+        
+    def charger_generateur(self,dossier="Model/"):
+        ## Pareil que précédemment mais on charge que le générateur pour se faciliter la vie vu qu'on veut juste 
+        ## générer une image à l'aide du générateur
+        
+        print("Chargement du générateur depuis ",dossier," en cours ...")
+        # -- Charger générateur --
+        self.generateur= tf.keras.models.load_model(dossier+"Generateur")
+        
+        print("Générateur chargé!\n")
+        

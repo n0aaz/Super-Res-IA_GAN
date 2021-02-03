@@ -56,7 +56,7 @@ class ImageSuperRes():
 
     def superResolution(self, cheminSource):
         sr=srgan()
-        sr.charger_modeles()
+        sr.charger_generateur()
         
         miniImages= self.decoupe_images(cheminSource)
         
