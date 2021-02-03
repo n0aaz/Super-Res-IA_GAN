@@ -25,16 +25,21 @@ class ImageSuperRes():
 
         nbColonnes=img.shape[0]//x
         nbLignes=img.shape[1]//y
+        
+        padded=np.zeros((ty*(nbLignes+1),tx*(nbColonnes+1),3))
+        padded[:img.shape[1],:img.shape[0],:] = img[:,:,:]
+        
 
-        tableau = np.array(
-            [[img[
+        tableau = [[padded[
                 k*x:(k+1)*x,
                 l*y:(l+1)*y,
                 :] 
-                for l in range(nbLignes)] 
-                for k in range(nbColonnes)]
-                    ,dtype=object)
+                for l in range(nbLignes+1)] 
+                for k in range(nbColonnes+1)]
+        
+        tableau = np.array(tableau,dtype=object)
 
+        
         return tableau
 
     def reconstitue_image(self,tableau):
