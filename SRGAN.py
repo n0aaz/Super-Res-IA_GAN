@@ -34,6 +34,12 @@ class SRGAN():
         self.hr_width = 224 #self.lr_width*4     # High resolution width
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
         
+        # Introduction d'une fonction d'autosauvegarde qui va 
+        # sauvegarder le modèle à intervalles réguliers de génération
+        # ainsi qu'un "aperçu" de la sortie du générateur!
+        self.auto_sauvegarde = False
+        self.intervalle_sauvegarde= 50
+        
         print("lr_shape,hrshape=",self.lr_shape, self.hr_shape)
 
         self.train_sample_interval=50
@@ -147,7 +153,16 @@ class SRGAN():
             tempsgeneration = datetime.datetime.now() -debutgeneration
             
             # pour qu'on voie sur le terminal l'avancée
-            print("Generation n°:"+str(k)+"\nDuree: "+str(tempsgeneration)+"\nDuree Totale:"+str(temps))
+            print("Generation n°:"+str(k)+"\nDuree: "+str(tempsgeneration)+"\nDuree Totale:"+str(temps)+"\n")
+            print("Perte (loss) du générateur: ",gen_loss,"\nPerte du discriminateur: ",disc_loss)
+            
+            if((self.auto_sauvegarde) and (k%self.intervalle_sauvegarde==0)):
+                print("--- Intervalle de sauvegarde atteint ---\n")
+                print("Nous en sommes à l'échantillon n°",k)
+                self.echantillon_images(k)
+                self.sauvegarde_modeles()
+                print("--- Sauvegarde terminée ----------------\n")
+                
         
     def echantillon_images (self, generation) :#generation=epoch
     
