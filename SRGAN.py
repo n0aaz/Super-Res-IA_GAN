@@ -156,7 +156,7 @@ class SRGAN():
             print("Generation n°:"+str(k)+"\nDuree: "+str(tempsgeneration)+"\nDuree Totale:"+str(temps)+"\n")
             print("Perte (loss) du générateur: ",gen_loss,"\nPerte du discriminateur: ",disc_loss)
             
-            if((self.auto_sauvegarde) and (k%self.intervalle_sauvegarde==0)):
+            if((self.auto_sauvegarde) and (k+1%self.intervalle_sauvegarde==0)):
                 print("--- Intervalle de sauvegarde atteint ---\n")
                 print("Nous en sommes à l'échantillon n°",k)
                 self.echantillon_images(k)
