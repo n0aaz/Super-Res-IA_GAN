@@ -4,8 +4,8 @@ from SRGAN import SRGAN as srgan
 #sleep(3600*3)
 
 SR=srgan()
-SR.train_batch_size = 32 # temps par génération : environ 3s 
+SR.train_batch_size = 16 # temps par génération : environ 2s 
 SR.auto_sauvegarde= True
 SR.intervalle_sauvegarde= 100 # temps par sauvegarde : environ 7s
-SR.train(1200) # temps d'entrainement estimé : 3600s + 7*12s = 1h01
+SR.train(2400) # temps d'entrainement estimé : 4800s + 7*12s = 1h21
 
