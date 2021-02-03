@@ -49,7 +49,7 @@ class ImageSuperRes():
         
         for k in range(len(tableau)):
             for l in range(len(tableau[0])):
-                print(tableau[k,l][:10,:10])
+                #print(tableau[k,l][:10,:10])
                 image[k*tX:(k+1)*tX, l*tY:(l+1)*tY,:]= tableau[k,l]
         
         return image

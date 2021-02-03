@@ -16,15 +16,17 @@ class Vgg():
 
     def build(self):
         entree = Input(shape = self.hr_shape)
-        print("REGARDE ICI : ",entree.shape,self.hr_shape)
+        #print("REGARDE ICI : ",entree.shape,self.hr_shape)
         
-        vgg=VGG19(input_shape=self.hr_shape,weights="imagenet")
+        vgg=VGG19(include_top= False, input_shape=self.hr_shape,weights="imagenet")
+        for l in vgg.layers:
+            l.trainable=False
         
         #corrige le problème de pop from empty list mais pas sur pourquoi
         #vgg.outputs = [vgg.layers[9].output]
         
         # Récupération des "features" de l'image: des nombres qui caractérisent une image
         #print(entree)
-        img_features = vgg(entree)
+        img_features = vgg.get_layer('block5_conv4').output
 
-        return Model(entree, img_features)        
+        return Model(inputs=vgg.input, outputs=img_features)        
