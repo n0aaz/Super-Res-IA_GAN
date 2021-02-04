@@ -27,11 +27,14 @@ class SRGAN():
     def __init__(self):
         # Input shape
         self.channels = 3
-        self.lr_height = 224//4 #64                 # Low resolution height
-        self.lr_width = 224//4 #64                  # Low resolution width
+        
+        self.facteur_reduction=4
+        self.hr_height = 448 #self.lr_height*4   # High resolution height
+        self.hr_width = 448 #self.lr_width*4     # High resolution width
+        self.lr_height = self.hr_height//self.facteur_reduction #64                 # Low resolution height
+        self.lr_width = self.hr_width//self.facteur_reduction #64                  # Low resolution width
         self.lr_shape = (self.lr_height, self.lr_width, self.channels)
-        self.hr_height = 224 #self.lr_height*4   # High resolution height
-        self.hr_width = 224 #self.lr_width*4     # High resolution width
+
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
         
         # Introduction d'une fonction d'autosauvegarde qui va 
@@ -60,6 +63,7 @@ class SRGAN():
         self.data_loader = DataLoader(dossier=self.dataset_name,
                                       resolution=(self.hr_height, self.hr_width))
         self.data_loader.batch_size=self.train_batch_size
+        self.data_loader.facteur_reduction=self.facteur_reduction
         # Calculate output shape of D (PatchGAN)
         patch = int(self.hr_height / 2**4)
         self.disc_patch = (patch, patch, 1)    
@@ -93,10 +97,12 @@ class SRGAN():
 
     def train_discriminator(self):
         self.data_loader.batch_size=self.train_batch_size
+        #self.data_loader.facteur_reduction=self.facteur_reduction
+        
         highres,lowres = self.data_loader.load_data()
         
         print("batch size= ",self.train_batch_size,self.data_loader.batch_size)
-        print(len(lowres),len(highres))
+        print(len(lowres[0]),len(highres[0]))
         
         # image haute résolution générée 
         
@@ -121,6 +127,7 @@ class SRGAN():
     
     def train_generator(self):
         self.data_loader.batch_size=self.train_batch_size
+        self.data_loader.facteur_reduction=self.facteur_reduction
         highres,lowres = self.data_loader.load_data()
 
         # le but du générateur est de tendre vers le modèle où le discriminateur

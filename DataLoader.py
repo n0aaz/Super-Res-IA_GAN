@@ -4,7 +4,7 @@ from glob import glob
 
 
 class DataLoader():
-    def __init__(self,dossier,resolution=(224,224)):
+    def __init__(self,dossier,resolution=(448,448)):
         self.dossier= dossier
         self.resolution= resolution
         self.en_entrainement= False
