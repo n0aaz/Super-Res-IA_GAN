@@ -10,6 +10,7 @@ class DataLoader():
         self.en_entrainement= False
         self.batch_size=1
         self.facteur_reduction=4
+        self.cropping=True
 
 
     def entrainement(self): # méthode à invoquer pour signaler que ce sont des données d'entrainement
@@ -39,11 +40,32 @@ class DataLoader():
                     img = np.array(Image.open(chemin))
                 except: 
                     break
-
+                
+                if self.cropping and np.random.random()<0.2:
+                    # dans 20% des cas , on va crop l'image à un seul bloc de la bonne taille
+                    padded=np.zeros((x,y,3)) # padding lorsque l'image est plus petite que le bloc
+                    xMax, yMax = max(0,img.shape[0]-x) , max(0,img.shape[1]-y)
+                    
+                    if not xMax: # cas où on ne peut pas déplacer la fenetre de crop
+                        xRandom=0
+                    else:
+                        xRandom= np.random.randint(0,xMax)
+                    
+                    if not yMax:
+                        yRandom=0
+                    else:
+                        yRandom= np.random.randint(0,yMax)
+                        
+                    print("padded shape:", padded.shape)
+                    print("xrandom,yrandom= ",xRandom, ",",yRandom)
+                    padded[:img.shape[0],:img.shape[1],:] = img[xRandom:xRandom+x,yRandom:yRandom+y,:3]
+                    img=np.array(padded,dtype=np.uint8)
+                    print("img cropped shape: ", img.shape)
+                    
                 img_highres= np.array(Image.fromarray(img).resize((x,y)),dtype=float)
                 img_lowres= np.array(Image.fromarray(img).resize((x_reduit,y_reduit)),dtype=float)
 
-                #print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
+                print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
 
                 #Data augmenting : de temps en temps on va flip horizontalement les images aléatoirement
                 #resize pour redimensionner les images à la même taille
