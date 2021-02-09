@@ -27,9 +27,9 @@ class ImageSuperRes():
         nbLignes=img.shape[1]//y
         
         padded=np.zeros((y*(nbColonnes+1),x*(nbLignes+1),3))
-        print("padded: ",padded.shape)
-        print("image: ",img.shape)
-        padded[:img.shape[0],:img.shape[1],:] = img[:,:,:]
+        #print("padded: ",padded.shape)
+        #print("image: ",img.shape)
+        padded[:img.shape[0],:img.shape[1],:] = img[:,:,:3]
         
 
         tableau = [[padded[

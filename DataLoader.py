@@ -56,16 +56,16 @@ class DataLoader():
                     else:
                         yRandom= np.random.randint(0,yMax)
                         
-                    print("padded shape:", padded.shape)
-                    print("xrandom,yrandom= ",xRandom, ",",yRandom)
+                    #print("padded shape:", padded.shape)
+                    #print("xrandom,yrandom= ",xRandom, ",",yRandom)
                     padded[:img.shape[0],:img.shape[1],:] = img[xRandom:xRandom+x,yRandom:yRandom+y,:3]
                     img=np.array(padded,dtype=np.uint8)
-                    print("img cropped shape: ", img.shape)
+                    #print("img cropped shape: ", img.shape)
                     
                 img_highres= np.array(Image.fromarray(img).resize((x,y)),dtype=float)
                 img_lowres= np.array(Image.fromarray(img).resize((x_reduit,y_reduit)),dtype=float)
 
-                print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
+                #print("taille lowres: ",img_lowres.shape, "taille highres: " , img_highres.shape)
 
                 #Data augmenting : de temps en temps on va flip horizontalement les images aléatoirement
                 #resize pour redimensionner les images à la même taille
