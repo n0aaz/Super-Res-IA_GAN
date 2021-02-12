@@ -9,6 +9,7 @@ from PIL import Image
 #from SRGAN import SRGAN as srgan
 import matplotlib.pyplot as plt
 from SRGAN import SRGAN as srgan
+import datetime
 
 class ImageSuperRes():
     def __init__(self,tx=224,ty=224):
@@ -65,6 +66,7 @@ class ImageSuperRes():
         sr=srgan()
         sr.charger_generateur()
         
+        debut = datetime.datetime.now()
         miniImages= self.decoupe_images(cheminSource)
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
@@ -74,5 +76,5 @@ class ImageSuperRes():
                 np.array(miniImages[k],dtype="float32")
             )+1 )
             for k in range(len(miniImages)) ],dtype=object)
-        
+        print("temps de génération: ", datetime.datetime.now()-debut)
         return self.reconstitue_image(predictions)
