@@ -58,7 +58,7 @@ class DataLoader():
                         
                     #print("padded shape:", padded.shape)
                     #print("xrandom,yrandom= ",xRandom, ",",yRandom)
-                    padded[:img.shape[0],:img.shape[1],:] = img[xRandom:xRandom+x,yRandom:yRandom+y,:]
+                    padded[:img.shape[0],:img.shape[1],:img.shape[2]] = img[xRandom:xRandom+x,yRandom:yRandom+y,:]
                     img=np.array(padded,dtype=np.uint8)
                     #print("img cropped shape: ", img.shape)
                     
