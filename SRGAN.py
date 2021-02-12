@@ -28,9 +28,9 @@ class SRGAN():
         # Input shape
         self.channels = 3
         
-        self.facteur_reduction=4
-        self.hr_height = 448 #self.lr_height*4   # High resolution height
-        self.hr_width = 448 #self.lr_width*4     # High resolution width
+        self.facteur_reduction=2
+        self.hr_height = 224 #self.lr_height*4   # High resolution height
+        self.hr_width = 224 #self.lr_width*4     # High resolution width
         self.lr_height = self.hr_height//self.facteur_reduction #64                 # Low resolution height
         self.lr_width = self.hr_width//self.facteur_reduction #64                  # Low resolution width
         self.lr_shape = (self.lr_height, self.lr_width, self.channels)
