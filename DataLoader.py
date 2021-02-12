@@ -41,7 +41,7 @@ class DataLoader():
                 except: 
                     break
                 
-                if self.cropping and np.random.random()<0.2:
+                if self.cropping and np.random.random()<0.25 and len(img.shape)==3:
                     # dans 20% des cas , on va crop l'image à un seul bloc de la bonne taille
                     padded=np.zeros((x,y,img.shape[2])) # padding lorsque l'image est plus petite que le bloc
                     xMax, yMax = max(0,img.shape[0]-x) , max(0,img.shape[1]-y)
