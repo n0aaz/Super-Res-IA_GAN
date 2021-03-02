@@ -15,6 +15,7 @@ class ImageSuperRes():
     def __init__(self,tx=224,ty=224):
         self.tailleX = tx
         self.tailleY = ty
+        self.dequadrillage= False
     def decoupe_images(self,cheminSource):
         x=self.tailleX
         y=self.tailleY
@@ -76,5 +77,11 @@ class ImageSuperRes():
                 np.array(miniImages[k],dtype="float32")
             )+1 )
             for k in range(len(miniImages)) ],dtype=object)
+        
+        if self.dequadrillage :
+            artefact = sr.generateur.predict(-np.ones((1,self.tailleX,self.tailleY,3)))[0]
+            print("Artefact: ",artefact)
+            for prediction in predictions:
+                prediction -= artefact
         print("temps de génération: ", datetime.datetime.now()-debut)
         return self.reconstitue_image(predictions)
