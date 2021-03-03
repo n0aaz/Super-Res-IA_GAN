@@ -30,8 +30,8 @@ class SRGAN():
         
         self.facteur_reduction=4
 
-        self.hr_height = 224 #self.lr_height*4   # High resolution height
-        self.hr_width = 224 #self.lr_width*4     # High resolution width
+        self.hr_height = 448 #self.lr_height*4   # High resolution height
+        self.hr_width = 448 #self.lr_width*4     # High resolution width
         self.lr_height = self.hr_height//self.facteur_reduction #64                 # Low resolution height
         self.lr_width = self.hr_width//self.facteur_reduction #64                  # Low resolution width
         self.lr_shape = (self.lr_height, self.lr_width, self.channels)
@@ -39,7 +39,9 @@ class SRGAN():
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
         
         self.adam_beta1= 0.9
-        self.adam_learning_rate= 0.0001
+        self.adam_beta2=0.999
+        self.adam_epsilon=1e-08
+        self.adam_learning_rate= 1e-04
         
         # Introduction d'une fonction d'autosauvegarde qui va 
         # sauvegarder le modèle à intervalles réguliers de génération
@@ -54,7 +56,7 @@ class SRGAN():
         
 
         #self.optimizer=Adam(0.0002, 0.5)
-        self.optimizer= Adam(self.adam_learning_rate,self.adam_beta1)
+        self.optimizer= Adam(learning_rate=self.adam_learning_rate,beta_1=self.adam_beta1,beta_2=self.adam_beta2,epsilon=self.adam_epsilon)
         
         self.vgg = Vgg(self.hr_shape)
         self.vgg = self.vgg.build()
