@@ -43,6 +43,8 @@ class SRGAN():
         self.adam_epsilon=1e-08
         self.adam_learning_rate= 1e-04
         
+        self.vgg_loss_factor= 1/12.75
+        
         # Introduction d'une fonction d'autosauvegarde qui va 
         # sauvegarder le modèle à intervalles réguliers de génération
         # ainsi qu'un "aperçu" de la sortie du générateur!
@@ -98,7 +100,7 @@ class SRGAN():
         validite = self.discriminateur(gen_highres)
         self.combinaison = Model([img_lowres,img_highres],[validite,gen_features])
         self.combinaison.compile(loss=['binary_crossentropy', 'mse'],
-                              loss_weights=[1e-3, 1],
+                              loss_weights=[1e-3, 1*self.vgg_loss_factor],
                               optimizer=self.optimizer)
 
 
@@ -251,7 +253,7 @@ class SRGAN():
             metrics=['accuracy'])
         print("Compilation du modèle combiné...")
         self.combinaison.compile(loss=['binary_crossentropy', 'mse'],
-                              loss_weights=[1e-3, 1],
+                              loss_weights=[1e-3, 1*self.vgg_loss_factor],
                               optimizer=self.optimizer)
         print("Modèle chargé !\n")
         
