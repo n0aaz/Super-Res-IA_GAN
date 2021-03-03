@@ -27,6 +27,6 @@ class Vgg():
         
         # Récupération des "features" de l'image: des nombres qui caractérisent une image
         #print(entree)
-        img_features = vgg.get_layer('block5_conv4').output
+        img_features = vgg.get_layer('block2_conv2').output
 
         return Model(inputs=vgg.input, outputs=img_features)        
