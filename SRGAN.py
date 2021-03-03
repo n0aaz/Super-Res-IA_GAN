@@ -38,6 +38,9 @@ class SRGAN():
 
         self.hr_shape = (self.hr_height, self.hr_width, self.channels)
         
+        self.adam_beta1= 0.9
+        self.adam_learning_rate= 0.0001
+        
         # Introduction d'une fonction d'autosauvegarde qui va 
         # sauvegarder le modèle à intervalles réguliers de génération
         # ainsi qu'un "aperçu" de la sortie du générateur!
@@ -50,8 +53,9 @@ class SRGAN():
         self.train_batch_size=16
         
 
-        self.optimizer=Adam(0.0002, 0.5)
-
+        #self.optimizer=Adam(0.0002, 0.5)
+        self.optimizer= Adam(self.adam_learning_rate,self.adam_beta1)
+        
         self.vgg = Vgg(self.hr_shape)
         self.vgg = self.vgg.build()
         self.vgg.trainable = False
