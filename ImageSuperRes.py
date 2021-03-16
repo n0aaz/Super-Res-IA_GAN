@@ -17,6 +17,7 @@ class ImageSuperRes():
         self.tailleY = ty
         self.dequadrillage= False
     def decoupe_images(self,cheminSource):
+        print("Decoupe des images en blocs de ",self.tailleX,"x",self.tailleY," en cours...")
         x=self.tailleX
         y=self.tailleY
         try:
@@ -29,8 +30,6 @@ class ImageSuperRes():
         nbLignes=img.shape[1]//y
         
         padded=np.zeros((y*(nbColonnes+1),x*(nbLignes+1),3))
-        #print("padded: ",padded.shape)
-        #print("image: ",img.shape)
         padded[:img.shape[0],:img.shape[1],:] = img[:,:,:3]
         
 
@@ -42,15 +41,15 @@ class ImageSuperRes():
                 for k in range(nbColonnes+1)]
         
         tableau = np.array(tableau,dtype=object)
-
         
+        print("Decoupe avec succes de l'image en ",len(tableau)*len(tableau[0])," blocs!")
         return tableau,img.shape
 
     def reconstitue_image(self,tableau,origShape):
-
+        
+        print("Reconstitution de ", len(tableau), "petites images en cours...")
         tX = tableau[0,0].shape[0]
         tY = tableau[0,0].shape[1]
-        print(tX,tY)
         x= len(tableau)*tX
         y= len(tableau[0])*tY
         
@@ -61,6 +60,7 @@ class ImageSuperRes():
                 #print(tableau[k,l][:10,:10])
                 image[k*tX:(k+1)*tX, l*tY:(l+1)*tY,:]= tableau[k,l]
         
+        print("Reconstitution effectuée!, taille finale: ",origShape)
         return image[0:origShape[0],0:origShape[1],:]
 
     def superResolution(self, cheminSource):
@@ -69,7 +69,6 @@ class ImageSuperRes():
         
         debut = datetime.datetime.now()
         miniImages,shapeOriginal= self.decoupe_images(cheminSource)
-        shapeUpscaled= shapeOriginal*4
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
 
@@ -85,4 +84,4 @@ class ImageSuperRes():
             for prediction in predictions:
                 prediction -= artefact
         print("temps de génération: ", datetime.datetime.now()-debut)
-        return self.reconstitue_image(predictions,shapeUpscaled)
+        return self.reconstitue_image(predictions,shapeOriginal)
