@@ -16,6 +16,7 @@ class ImageSuperRes():
         self.tailleX = tx
         self.tailleY = ty
         self.dequadrillage= False
+        self.facteur_upscaling= 4
     def decoupe_images(self,cheminSource):
         print("Decoupe des images en blocs de ",self.tailleX,"x",self.tailleY," en cours...")
         x=self.tailleX
@@ -69,6 +70,7 @@ class ImageSuperRes():
         
         debut = datetime.datetime.now()
         miniImages,shapeOriginal= self.decoupe_images(cheminSource)
+        shapeUpscaled= shapeOriginal[0]*self.facteur_upscaling, shapeOriginal[1]*self.facteur_upscaling
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
 
@@ -84,4 +86,4 @@ class ImageSuperRes():
             for prediction in predictions:
                 prediction -= artefact
         print("temps de génération: ", datetime.datetime.now()-debut)
-        return self.reconstitue_image(predictions,shapeOriginal)
+        return self.reconstitue_image(predictions,shapeUpscaled)
