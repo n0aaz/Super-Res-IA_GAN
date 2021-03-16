@@ -6,7 +6,6 @@
 
 import numpy as np
 from PIL import Image
-#from SRGAN import SRGAN as srgan
 import matplotlib.pyplot as plt
 from SRGAN import SRGAN as srgan
 import datetime
