@@ -12,7 +12,7 @@ from SRGAN import SRGAN as srgan
 import datetime
 
 class ImageSuperRes():
-    def __init__(self,tx=224,ty=224):
+    def __init__(self,tx=112,ty=112):
         self.tailleX = tx
         self.tailleY = ty
         self.dequadrillage= False
@@ -44,9 +44,9 @@ class ImageSuperRes():
         tableau = np.array(tableau,dtype=object)
 
         
-        return tableau
+        return tableau,img.shape
 
-    def reconstitue_image(self,tableau):
+    def reconstitue_image(self,tableau,origShape):
 
         tX = tableau[0,0].shape[0]
         tY = tableau[0,0].shape[1]
@@ -61,14 +61,15 @@ class ImageSuperRes():
                 #print(tableau[k,l][:10,:10])
                 image[k*tX:(k+1)*tX, l*tY:(l+1)*tY,:]= tableau[k,l]
         
-        return image
+        return image[0:origShape[0],0:origShape[1],:]
 
     def superResolution(self, cheminSource):
         sr=srgan()
         sr.charger_generateur()
         
         debut = datetime.datetime.now()
-        miniImages= self.decoupe_images(cheminSource)
+        miniImages,shapeOriginal= self.decoupe_images(cheminSource)
+        shapeUpscaled= shapeOriginal*4
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
 
@@ -84,4 +85,4 @@ class ImageSuperRes():
             for prediction in predictions:
                 prediction -= artefact
         print("temps de génération: ", datetime.datetime.now()-debut)
-        return self.reconstitue_image(predictions)
+        return self.reconstitue_image(predictions,shapeUpscaled)
