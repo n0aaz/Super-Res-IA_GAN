@@ -7,7 +7,6 @@ from tensorflow.keras.optimizers import Adam
 
 import datetime
 import matplotlib.pyplot as plt
-#import sys
 
 import numpy as np
 import os
@@ -16,8 +15,6 @@ from DataLoader import DataLoader
 from Generator import Generator
 from Discriminator import Discriminator
 from Vgg import Vgg
-
-#import tensorflow.keras.backend as K
 
 class SRGAN():
     def __init__(self):
