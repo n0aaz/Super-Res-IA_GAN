@@ -1,14 +1,7 @@
 # Liste des imports dont on pourra éventuellement avoir besoin
 
-#import scipy
 import tensorflow as tf
-#from tensorflow.keras.datasets import mnist
-#from tensorflow.keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
-from tensorflow.keras.layers import Input #, Dense, Reshape, Flatten, Dropout, Concatenate
-#from tensorflow.keras.layers import BatchNormalization, Activation, ZeroPadding2D, Add
-#from tensorflow.keras.layers import PReLU, LeakyReLU
-#from tensorflow.keras.layers import UpSampling2D, Conv2D
-#from tensorflow.keras.applications import VGG19
+from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.optimizers import Adam
 
