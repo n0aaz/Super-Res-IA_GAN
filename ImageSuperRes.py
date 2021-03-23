@@ -16,6 +16,7 @@ class ImageSuperRes():
         self.tailleY = ty
         self.dequadrillage= False
         self.facteur_upscaling= 4
+        self.alpha_dequadrillage = 0.75
     def decoupe_images(self,cheminSource):
         print("Decoupe des images en blocs de ",self.tailleX,"x",self.tailleY," en cours...")
         x=self.tailleX
@@ -63,6 +64,65 @@ class ImageSuperRes():
         print("Reconstitution effectuée!, taille finale: ",origShape)
         return image[0:origShape[0],0:origShape[1],:]
 
+    def supprimer_quadrillage(self,img_lowres,img_superres):
+        print("Amélioration de la qualité de l'image finale...")
+        x_superres,y_superres = img_superres[0].shape
+        x_lowres,y_lowres= img_lowres[0].shape
+        # positions du centre de chaque image
+        xMilieu_superres,yMilieu_superres = x_superres//2,y_superres//2
+        xMilieu_lowres,yMilieu_lowres= x_lowres//2,y_lowres//2
+
+        #### Calcul des transformées de fourier/fft : ####
+        # fft de la forme fft_lowres[x,y,r/g/b]
+        fft_lowres = np.array([np.fft.fft2(img_lowres[:,:,k]) for k in range(3)])
+        # on shift chacune des fft: on décale fft(0) (la moyenne) au centre de l'image
+        fftShifted_lowres = np.fft.fftshift(fft_lowres)
+
+        fft_superres = np.array([np.fft.fft2(img_superres[:,:,k]) for k in range(3)])
+        fftShifted_superres = np.fft.fftshift(fft_superres)
+
+        #### Injection de la fft de l'image lowres dans la fft superres ####
+        # xxxxxxxxxxxxxxxxxxxx
+        # xxx00000000000000xxx
+        # xxx00000000000000xxx      - x : fft de la superresolution
+        # xxx00000000000000xxx      - 0 : fft de la basse résolution
+        # xxx00000000000000xxx
+        # xxx00000000000000xxx
+        # xxxxxxxxxxxxxxxxxxxx
+
+        # position des quatres coins du carré d'insertion
+        positions = [
+                        [xMilieu_superres-xMilieu_lowres,xMilieu_superres-xMilieu_lowres+x_lowres],
+                        [yMilieu_superres-yMilieu_lowres,yMilieu_superres-yMilieu_lowres+y_lowres]
+                    ]
+        # explication du calcul : notre image de la superresolution contient 16* plus de pixels soit 4*4
+        # l'énergie de sa fft est donc 16x supérieure à celle de la fft de basse résolution
+        # c'est pourquoi pour équilibrer on multiplie la fft de la basse résolution par la même quantité
+        # pour conserver une uniformité des amplitudes lorsqu'on insère l'un dans l'autre !
+        # ensuite on fait une moyenne pondérée entre les deux fft sur la zone intérieure:
+        # centre(nouvelle fft) = alpha * fft_lowres + (1-alpha) * centre(fft_superres)
+        # de cette manière on peut contrôler la quantité de détails que l'on conserve!
+        fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1]]= (self.facteur_upscaling**2)*self.alpha_dequadrillage* fftShifted_lowres + \
+fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1]]*(1-self.alpha_dequadrillage)
+
+        # contient des zéros pour l'instant mais on va le remplir
+        img_corrected= np.zeros((x_superres,y_superres))
+
+        #### Reconstitution à partir de la fft modifiée ####
+        # 1- reshifter la fft au bon endroit (centre à x=0,y=0)
+        superres_reconstruction = np.fft.ifftshift(fftShifted_superres)
+        # 2- fft inverse
+        superres_reconstruction = np.fft.ifft2(superres_reconstruction)
+        # 3- module : la ffti renvoie des complexes
+        superres_reconstruction = np.abs(superres_reconstruction)
+        # 4- mise en forme et renormalisation de chaque couleur reconstruite
+        img_corrected[:,:,0]= (superres_reconstruction[0])/np.max(superres_reconstruction)
+        img_corrected[:,:,1]=(superres_reconstruction[1])/np.max(superres_reconstruction)
+        img_corrected[:,:,2]=(superres_reconstruction[2])/np.max(superres_reconstruction)
+
+        print("Effectué !")
+        return img_corrected
+
     def superResolution(self, cheminSource):
         sr=srgan()
         sr.charger_generateur()
@@ -79,10 +139,24 @@ class ImageSuperRes():
             )+1 )
             for k in range(len(miniImages)) ],dtype=object)
         
-        if self.dequadrillage :
+        if self.dequadrillage : # déquadrillage en 3 étapes
+            # 1 - générer le profil type de l'impact de la superresolution
+            # sur une image vide
             artefact = sr.generateur.predict(-np.ones((1,self.tailleX,self.tailleY,3)))[0]
-            print("Artefact: ",artefact)
+            #print("Artefact: ",artefact)
+
+            # 2 - soustraire ce pattern à chaque bout d'image 
             for prediction in predictions:
                 prediction -= artefact
+            
+            # 3 - terminer la suppression du quadrillage grace a la methode
+            # des fft ! 
+            return self.supprimer_quadrillage(
+                self.reconstitue_image(predictions,shapeUpscaled)
+                )
+        else : 
+            return self.reconstitue_image(predictions,shapeUpscaled)
+
         print("temps de génération: ", datetime.datetime.now()-debut)
+        
         return self.reconstitue_image(predictions,shapeUpscaled)
