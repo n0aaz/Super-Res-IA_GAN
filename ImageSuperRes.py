@@ -43,7 +43,7 @@ class ImageSuperRes():
         tableau = np.array(tableau,dtype=object)
         
         print("Decoupe avec succes de l'image en ",len(tableau)*len(tableau[0])," blocs!")
-        return tableau,img.shape
+        return tableau,(img.shape[0],img.shape[1])
 
     def reconstitue_image(self,tableau,origShape):
         
