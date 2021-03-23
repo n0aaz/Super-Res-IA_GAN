@@ -1,4 +1,3 @@
-import tensorflow as tf
 import numpy as np
 from keras.applications import VGG19
 from keras.layers import Input
@@ -7,8 +6,6 @@ from keras.models import Model
 #from tensorflow.keras.applications import VGG19
 #from tensorflow.keras.layers import Input
 #from tensorflow.keras.models import Model
-
-import tensorflow.keras.backend as K
 
 class Vgg():
     def __init__(self, hrshape):

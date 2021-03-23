@@ -1,6 +1,5 @@
 # Liste des imports dont on pourra éventuellement avoir besoin
-import scipy
-import tensorflow as tf
+#import tensorflow as tf
 from tensorflow.keras.layers import Input
 from tensorflow.keras.layers import BatchNormalization, Activation, ZeroPadding2D, Add
 from tensorflow.keras.layers import UpSampling2D, Conv2D

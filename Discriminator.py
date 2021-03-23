@@ -1,5 +1,5 @@
 # Liste des imports
-import tensorflow as tf
+#import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import LeakyReLU
