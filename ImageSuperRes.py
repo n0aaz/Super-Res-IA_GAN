@@ -66,8 +66,8 @@ class ImageSuperRes():
 
     def supprimer_quadrillage(self,img_lowres,img_superres):
         print("Amélioration de la qualité de l'image finale...")
-        x_superres,y_superres = img_superres[0].shape
-        x_lowres,y_lowres= img_lowres[0].shape
+        x_superres,y_superres = img_superres[:,:,0].shape
+        x_lowres,y_lowres= img_lowres[:,:,0].shape
         # positions du centre de chaque image
         xMilieu_superres,yMilieu_superres = x_superres//2,y_superres//2
         xMilieu_lowres,yMilieu_lowres= x_lowres//2,y_lowres//2
@@ -91,10 +91,10 @@ class ImageSuperRes():
         # xxxxxxxxxxxxxxxxxxxx
 
         # position des quatres coins du carré d'insertion
-        positions = [
-                        [xMilieu_superres-xMilieu_lowres,xMilieu_superres-xMilieu_lowres+x_lowres],
-                        [yMilieu_superres-yMilieu_lowres,yMilieu_superres-yMilieu_lowres+y_lowres]
-                    ]
+        positions = np.array([
+                        [xMilieu_superres-xMilieu_lowres , xMilieu_superres-xMilieu_lowres+x_lowres],
+                        [yMilieu_superres-yMilieu_lowres, yMilieu_superres-yMilieu_lowres+y_lowres]
+                    ])
         # explication du calcul : notre image de la superresolution contient 16* plus de pixels soit 4*4
         # l'énergie de sa fft est donc 16x supérieure à celle de la fft de basse résolution
         # c'est pourquoi pour équilibrer on multiplie la fft de la basse résolution par la même quantité
@@ -106,7 +106,7 @@ class ImageSuperRes():
 fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1]]*(1-self.alpha_dequadrillage)
 
         # contient des zéros pour l'instant mais on va le remplir
-        img_corrected= np.zeros((x_superres,y_superres))
+        img_corrected= np.zeros(img_superres.shape)
 
         #### Reconstitution à partir de la fft modifiée ####
         # 1- reshifter la fft au bon endroit (centre à x=0,y=0)
@@ -116,9 +116,10 @@ fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1
         # 3- module : la ffti renvoie des complexes
         superres_reconstruction = np.abs(superres_reconstruction)
         # 4- mise en forme et renormalisation de chaque couleur reconstruite
-        img_corrected[:,:,0]= (superres_reconstruction[0])/np.max(superres_reconstruction)
-        img_corrected[:,:,1]=(superres_reconstruction[1])/np.max(superres_reconstruction)
-        img_corrected[:,:,2]=(superres_reconstruction[2])/np.max(superres_reconstruction)
+        max_reconstruction = np.max(superres_reconstruction)
+        img_corrected[:,:,0]= (superres_reconstruction[0])/max_reconstruction
+        img_corrected[:,:,1]=(superres_reconstruction[1])/max_reconstruction
+        img_corrected[:,:,2]=(superres_reconstruction[2])/max_reconstruction
 
         print("Effectué !")
         return img_corrected
@@ -129,6 +130,7 @@ fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1
         
         debut = datetime.datetime.now()
         miniImages,shapeOriginal= self.decoupe_images(cheminSource)
+        image_lowres = np.asarray(Image.open(cheminSource))
         shapeUpscaled= shapeOriginal[0]*self.facteur_upscaling, shapeOriginal[1]*self.facteur_upscaling
         
         miniImages = ((miniImages/255.0)-0.5)*2.0 ## ramener entre -1 et 1
@@ -146,17 +148,16 @@ fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1
             #print("Artefact: ",artefact)
 
             # 2 - soustraire ce pattern à chaque bout d'image 
-            for prediction in predictions:
-                prediction -= artefact
+            #for prediction in predictions:
+            #    prediction -= artefact
             
             # 3 - terminer la suppression du quadrillage grace a la methode
             # des fft ! 
+            print("temps de génération: ", datetime.datetime.now()-debut)
             return self.supprimer_quadrillage(
+                image_lowres,
                 self.reconstitue_image(predictions,shapeUpscaled)
                 )
         else : 
+            print("temps de génération: ", datetime.datetime.now()-debut)
             return self.reconstitue_image(predictions,shapeUpscaled)
-
-        print("temps de génération: ", datetime.datetime.now()-debut)
-        
-        return self.reconstitue_image(predictions,shapeUpscaled)
