@@ -1,0 +1,1 @@
+Ce dossier est volontairement vide : le dataset qui a été utilisé pour l'entraînement de notre réseau de neurones est le dataset "MS_Coco" qui est trop lourd pour être uploadé sur GitHub. C'est pourquoi nous laissons ce dossier néanmoins présent pour signaler à d'autres personnes que c'est effectivement cette base de données qui a été utilisée!
