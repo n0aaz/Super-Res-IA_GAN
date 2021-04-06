@@ -9,7 +9,7 @@ Rappel : utiliser `pip install xxx` pour installer le module xxx sur python
 - Pillow
 - Tensorflow (préférablement avec support GPU/Cuda)
 - Keras
-- glob
+- glob3
 - numpy
 - matplotlib
 - datetime
