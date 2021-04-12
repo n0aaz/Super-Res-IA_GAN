@@ -96,7 +96,7 @@ image_highres = SR.generateur.predict(image_lowres_normalisee)
 
 #### L'alternative préférée et préférable: la classe ImageSuperRes
 
-Cette manière de prédire des images n'est pas la plus pratique assurément c'est pourquoi nous avons crée un wrapper autour de ce travail sur des petites images qui s'occupe de tout automatiser. Voici la classe ImageSuperRes : 
+Cette manière de prédire des images n'est pas la plus pratique assurément c'est pourquoi nous avons créé un wrapper autour de ce travail sur des petites images qui s'occupe de tout automatiser. Voici la classe ImageSuperRes : 
 
 **Initialisation et appel:**
 
