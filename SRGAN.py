@@ -8,6 +8,9 @@ from tensorflow.keras.optimizers import Adam
 import datetime
 import matplotlib.pyplot as plt
 
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
+
 import numpy as np
 import os
 
@@ -172,6 +175,16 @@ class SRGAN():
                 self.sauvegarde_modeles()
                 print("--- Sauvegarde terminée ----------------\n")
                 
+
+    # Pour calculer le PSNR entre deux images type sortie de réseau de neurones
+    def calculate_psnr(self,image1,image2):
+        # Attention: les valeurs de image1 et image2 doivent être entre -1 et +1
+        from math import log10,sqrt
+        image1_Fullscale = (0.5 * image1 + 0.5)*255.0 
+        image2_Fullscale = (0.5 * image2 + 0.5)*255.0 
+        mse= np.mean((image1_Fullscale-image2_Fullscale)**2)
+        return 20*log10(255.0/sqrt(mse))
+
         
     def echantillon_images (self, generation) :#generation=epoch
     
@@ -180,7 +193,7 @@ class SRGAN():
     
         #Récupération des images
         self.data_loader.entrainement=True
-        self.data_loader.batch_size=2
+        self.data_loader.batch_size=1
         highres, lowres = self.data_loader.load_data()
         highres_genere = self.generateur.predict(lowres)
     
@@ -188,30 +201,34 @@ class SRGAN():
         lowres = 0.5 * lowres + 0.5
         highres_genere = 0.5 * highres_genere + 0.5
         highres = 0.5 * highres + 0.5
-    
+
+        # Calcul du PSNR:
+        psnr=self.calculate_psnr(highres,highres_genere)
+        psnr=round(psnr,2)
+
         #Sauvergarde des images HR générées et des images HR
-        ligne, colonne = 2,2
-        titres = ['Haute résolution générée','Haute résolution originale']
+        ligne, colonne = 1,3
+        titres = ['Basse Résolution',f"Haute résolution générée\nPSNR={psnr} dB",'Haute résolution originale']
         fig, axs = plt.subplots(ligne,colonne)
-        fig.set_size_inches(12,8)
+        fig.set_size_inches(12,7)
         compteur = 0
         for i in range(ligne) :
-            for colonne, image in enumerate ([highres_genere,highres]):
-                axs[i, colonne].imshow(image[i])
-                axs[i, colonne].set_title(titres[colonne])
-                axs[i, colonne].axis('off')
+            for colonne, image in enumerate ([lowres,highres_genere,highres]):
+                axs[colonne].imshow(image[i])
+                xImage,yImage,zImage = image[i].shape
+                xOrigine,yOrigine=0.3*xImage,0.3*yImage
+                largeurX,largeurY=xImage*0.15,yImage*0.15
+                axins = zoomed_inset_axes(axs[colonne], 3, loc=1) # zoom = 4
+                axins.imshow(image[i], interpolation="nearest",origin="lower")
+                axins.set_xlim(xOrigine,xOrigine+largeurX)
+                axins.set_ylim(yOrigine+largeurY,yOrigine)
+                axins.axis('off')
+                mark_inset(axs[colonne], axins, loc1=2, loc2=4, fc="none", ec="r")
+                axs[colonne].set_title(titres[colonne])
+                #axs[colonne].axis('off')
             compteur += 1
         fig.savefig('images/%s/training/%d.png' % (self.dataset_name, generation))
         plt.close()
-
-        #Sauvegarde des images BR pour la comparaison
-        for j in range (ligne) :
-            fig = plt.figure()
-            plt.imshow(lowres[i])
-            
-            fig.savefig('images/%s/training/%d_lowres%d.png' % (self.dataset_name, generation, i))
-            
-            plt.close()
             
     def sauvegarde_modeles(self,dossier="Model/"):
         # Fonction pour pouvoir sauvegarder le modèle une fois enregistré, pour ne pas avoir à recalculer
