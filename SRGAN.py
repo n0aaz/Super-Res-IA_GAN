@@ -154,12 +154,18 @@ class SRGAN():
         
         #debut chrono pour mesurer le temps d'entrainement
         debut=datetime.datetime.now()
+        
+        history_discriminateur=[]
+        history_generateur=[]
 
         for k in range(generations):
 
             debutgeneration=datetime.datetime.now()
             disc_loss = self.train_discriminator()
             gen_loss = self.train_generator()
+            
+            history_discriminateur.append(np.mean(disc_loss))
+            history_generateur.append(np.mean(gen_loss))
 
             temps = datetime.datetime.now()-debut
             tempsgeneration = datetime.datetime.now() -debutgeneration
@@ -174,7 +180,7 @@ class SRGAN():
                 self.echantillon_images(k)
                 self.sauvegarde_modeles()
                 print("--- Sauvegarde terminée ----------------\n")
-                
+        return history_discriminateur,history_generateur
 
     # Pour calculer le PSNR entre deux images type sortie de réseau de neurones
     def calculate_psnr(self,image1,image2):
