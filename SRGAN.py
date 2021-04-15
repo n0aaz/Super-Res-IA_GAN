@@ -209,8 +209,8 @@ class SRGAN():
         #Sauvergarde des images HR générées et des images HR
         ligne, colonne = 1,3
         titres = ['Basse Résolution',f"Haute résolution générée\nPSNR={psnr} dB",'Haute résolution originale']
-        fig, axs = plt.subplots(ligne,colonne)
-        fig.set_size_inches(12,7)
+        fig, axs = plt.subplots(ligne,colonne,figsize=(15,15))
+        fig.set_size_inches(16,9)
         compteur = 0
         for i in range(ligne) :
             for colonne, image in enumerate ([lowres,highres_genere,highres]):
@@ -218,14 +218,23 @@ class SRGAN():
                 xImage,yImage,zImage = image[i].shape
                 xOrigine,yOrigine=0.3*xImage,0.3*yImage
                 largeurX,largeurY=xImage*0.15,yImage*0.15
-                axins = zoomed_inset_axes(axs[colonne], 3, loc=1) # zoom = 4
+
+                # Paramètres pour la petite boite de zoom 
+                axins = zoomed_inset_axes(axs[colonne], 3, loc=1) # zoom = 3
                 axins.imshow(image[i], interpolation="nearest",origin="lower")
                 axins.set_xlim(xOrigine,xOrigine+largeurX)
                 axins.set_ylim(yOrigine+largeurY,yOrigine)
-                axins.axis('off')
-                mark_inset(axs[colonne], axins, loc1=2, loc2=4, fc="none", ec="r")
+                #axins.axis('off')
+                patch,pp1,pp2=mark_inset(axs[colonne], axins, loc1=2, loc2=4, fc="none", ec="r")
+                pp1.loc1,pp1.loc2,pp2.loc1,pp2.loc2=2,4,3,1 # pour repositionner les guides de la box 
+                # 3--4 <---> 2--1
+                # |  |       |  | Connections des coins du zoom
+                # 2--1 <---> 3--4
+                axins.set_xticklabels('')
+                axins.set_yticklabels('')
                 axs[colonne].set_title(titres[colonne])
                 #axs[colonne].axis('off')
+                axs[colonne].indicate_inset_zoom(axins, edgecolor="red")
             compteur += 1
         fig.savefig('images/%s/training/%d.png' % (self.dataset_name, generation))
         plt.close()
