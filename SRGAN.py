@@ -238,6 +238,7 @@ class SRGAN():
             compteur += 1
         fig.savefig('images/%s/training/%d.png' % (self.dataset_name, generation))
         plt.close()
+        return psnr
             
     def sauvegarde_modeles(self,dossier="Model/"):
         # Fonction pour pouvoir sauvegarder le modèle une fois enregistré, pour ne pas avoir à recalculer
