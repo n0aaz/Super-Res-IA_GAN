@@ -4,3 +4,6 @@ Commande pour récupérer la base MS_Coco :
 
  wget http://images.cocodataset.org/zips/train2017.zip
 
+Pour extraire le fichier zip dans le bon dossier une fois le téléchargement terminé:
+ mkdir MS_Coco
+ unzip train2017.zip -j -d /MS_Coco
