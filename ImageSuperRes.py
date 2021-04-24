@@ -122,7 +122,7 @@ fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1
         img_corrected[:,:,2]=(superres_reconstruction[2])/max_reconstruction
 
         print("Effectué !")
-        return img_corrected
+        return img_corrected*255
 
     def superResolution(self, cheminSource):
         sr=srgan()
@@ -160,4 +160,4 @@ fftShifted_superres[:,positions[0,0]:positions[0,1],positions[1,0]:positions[1,1
                 )
         else : 
             print("temps de génération: ", datetime.datetime.now()-debut)
-            return self.reconstitue_image(predictions,shapeUpscaled)
+            return self.reconstitue_image(predictions,shapeUpscaled)**0.91
